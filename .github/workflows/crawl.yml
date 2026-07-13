@@ -13,7 +13,10 @@ permissions:
 jobs:
   build-kb:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
+
+    env:
+      SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
 
     steps:
       - name: 检出仓库代码
@@ -42,6 +45,7 @@ jobs:
               data = json.load(f)
           print("版本:", data.get("version"))
           print("总知识片段数:", data.get("total"))
+          print("带 URL 资料数:", data.get("url_count"))
           print("分类统计:", data.get("categories"))
           print("来源数量:", len(data.get("sources", {})))
           PY
