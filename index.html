@@ -7,76 +7,71 @@
 <title>🦪 生蚝AI知识库</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+  body { font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; }
   .scrollbar-thin::-webkit-scrollbar { width: 6px; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
+  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.35} }
   .loading-dot { animation: pulse-dot 1s infinite; }
 </style>
 </head>
+
 <body class="bg-gradient-to-br from-blue-50 to-cyan-50 min-h-screen">
+<div class="max-w-6xl mx-auto p-4 md:p-8">
 
-<div class="max-w-5xl mx-auto p-4 md:p-8">
-
-  <!-- 头部 -->
   <div class="flex justify-between items-center mb-6">
     <div>
       <h1 class="text-2xl md:text-3xl font-bold text-cyan-800 flex items-center gap-2">
         🦪 生蚝AI知识库
       </h1>
-      <p class="text-sm text-gray-500 mt-1">种质标准 · 养殖规程 · 专利论文 一站式检索</p>
+      <p class="text-sm text-gray-500 mt-1">种质标准 · 养殖规程 · 专利论文 · 本地资料 一站式检索</p>
     </div>
-    <button onclick="document.getElementById('settingsModal').classList.remove('hidden')"
-      class="p-2 rounded-full bg-white shadow hover:shadow-md transition">
+    <button onclick="openSettings()" class="p-3 rounded-full bg-white shadow hover:shadow-md transition">
       ⚙️
     </button>
   </div>
 
-  <!-- 知识库状态条 -->
-  <div id="statusBar" class="bg-white rounded-xl shadow px-4 py-3 mb-6 flex items-center justify-between text-sm">
+  <div class="bg-white rounded-xl shadow px-4 py-3 mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2 text-sm">
     <span id="kbStatus" class="text-gray-500">⏳ 正在加载知识库...</span>
     <span id="kbCount" class="text-gray-400"></span>
   </div>
 
-  <!-- 功能切换 -->
-  <div class="flex gap-2 mb-4">
-    <button id="tabSearch" onclick="switchTab('search')"
-      class="px-4 py-2 rounded-lg bg-cyan-600 text-white font-medium shadow">🔍 AI问答检索</button>
-    <button id="tabReview" onclick="switchTab('review')"
-      class="px-4 py-2 rounded-lg bg-white text-gray-600 font-medium shadow">📝 自动文献综述</button>
-    <button id="tabBrowse" onclick="switchTab('browse')"
-      class="px-4 py-2 rounded-lg bg-white text-gray-600 font-medium shadow">📚 浏览文献库</button>
+  <div id="categoryBar" class="mb-6 flex flex-wrap gap-2"></div>
+
+  <div class="flex flex-wrap gap-2 mb-4">
+    <button id="tabSearch" onclick="switchTab('search')" class="px-4 py-2 rounded-lg bg-cyan-600 text-white font-medium shadow">
+      🔍 AI问答检索
+    </button>
+    <button id="tabReview" onclick="switchTab('review')" class="px-4 py-2 rounded-lg bg-white text-gray-600 font-medium shadow">
+      📝 自动文献综述
+    </button>
+    <button id="tabBrowse" onclick="switchTab('browse')" class="px-4 py-2 rounded-lg bg-white text-gray-600 font-medium shadow">
+      📚 浏览文献库
+    </button>
   </div>
 
-  <!-- 输入区 -->
   <div class="bg-white rounded-2xl shadow p-4 mb-6">
-    <textarea id="queryInput" rows="2" placeholder="例如：太平洋牡蛎种质标准有哪些？三倍体牡蛎养殖密度控制规范？"
+    <textarea id="queryInput" rows="3" placeholder="例如：太平洋牡蛎种质标准有哪些？三倍体牡蛎养殖密度控制规范？"
       class="w-full border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-none"></textarea>
-    <div class="flex justify-between items-center mt-3">
-      <span class="text-xs text-gray-400">Ctrl+Enter 快速提交</span>
-      <button id="submitBtn" onclick="handleSubmit()"
-        class="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-lg font-medium shadow transition">
+    <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 mt-3">
+      <span class="text-xs text-gray-400">Ctrl+Enter 快速提交。回答质量取决于 knowledge_base.json 中的资料数量和质量。</span>
+      <button id="submitBtn" onclick="handleSubmit()" class="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-lg font-medium shadow transition">
         提交查询
       </button>
     </div>
   </div>
 
-  <!-- 结果区：AI问答 -->
   <div id="searchResult" class="space-y-4"></div>
 
-  <!-- 结果区：浏览文献库 -->
-  <div id="browseResult" class="hidden bg-white rounded-2xl shadow p-4 space-y-3 max-h-[600px] overflow-y-auto scrollbar-thin"></div>
+  <div id="browseResult" class="hidden bg-white rounded-2xl shadow p-4 space-y-3 max-h-screen overflow-y-auto scrollbar-thin"></div>
 
 </div>
 
-<!-- 设置弹窗 -->
 <div id="settingsModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl">
     <h2 class="text-lg font-bold mb-4">⚙️ 系统设置</h2>
 
     <label class="block text-sm text-gray-600 mb-1">硅基流动 API Key</label>
-    <input id="apiKeyInput" type="password" placeholder="sk-xxxxxxxxxxxx"
-      class="w-full border rounded-lg p-2 mb-4 text-sm">
+    <input id="apiKeyInput" type="password" placeholder="sk-xxxxxxxxxxxx" class="w-full border rounded-lg p-2 mb-4 text-sm">
 
     <label class="block text-sm text-gray-600 mb-1">知识库 JSON 地址</label>
     <input id="kbUrlInput" type="text" placeholder="https://raw.githubusercontent.com/用户名/oyster-kb/main/knowledge_base.json"
@@ -84,174 +79,339 @@
 
     <label class="block text-sm text-gray-600 mb-1">模型选择</label>
     <select id="modelSelect" class="w-full border rounded-lg p-2 mb-4 text-sm">
-      <option value="deepseek-ai/DeepSeek-V3">DeepSeek-V3.2（推荐）</option>
-      <option value="deepseek-ai/DeepSeek-V2.5">DeepSeek-V2.5</option>
-      <option value="Qwen/Qwen2.5-14B-Instruct">Qwen2.5-14B-Instruct</option>
+      <option value="deepseek-ai/DeepSeek-V3">deepseek-ai/DeepSeek-V3（推荐）</option>
+      <option value="deepseek-ai/DeepSeek-R1">deepseek-ai/DeepSeek-R1（推理强，可能较慢）</option>
+      <option value="Qwen/Qwen2.5-7B-Instruct">Qwen/Qwen2.5-7B-Instruct</option>
     </select>
 
+    <div class="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg p-3 mb-4">
+      注意：API Key 会保存在当前浏览器 localStorage 中。个人使用可以，公开给别人用不建议直接暴露 Key。
+    </div>
+
     <div class="flex gap-2 justify-end">
-      <button onclick="document.getElementById('settingsModal').classList.add('hidden')"
-        class="px-4 py-2 rounded-lg bg-gray-100 text-gray-600">取消</button>
-      <button onclick="saveSettings()"
-        class="px-4 py-2 rounded-lg bg-cyan-600 text-white">保存</button>
+      <button onclick="closeSettings()" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-600">取消</button>
+      <button onclick="saveSettings()" class="px-4 py-2 rounded-lg bg-cyan-600 text-white">保存</button>
     </div>
   </div>
 </div>
 
 <script>
 let knowledgeBase = [];
+let kbMeta = {};
 let currentTab = 'search';
+let lastReview = '';
 
-// ---------- 初始化 ----------
 window.onload = function() {
   const savedKey = localStorage.getItem('apiKey');
   const savedKbUrl = localStorage.getItem('kbUrl');
   const savedModel = localStorage.getItem('model');
+
   if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
   if (savedKbUrl) document.getElementById('kbUrlInput').value = savedKbUrl;
   if (savedModel) document.getElementById('modelSelect').value = savedModel;
 
-  if (savedKbUrl) loadKnowledgeBase(savedKbUrl);
-  else document.getElementById('kbStatus').innerHTML = '⚠️ 请先在设置中填入知识库地址';
+  if (savedKbUrl) {
+    loadKnowledgeBase(savedKbUrl);
+  } else {
+    document.getElementById('kbStatus').innerHTML = '⚠️ 请先在设置中填入知识库地址';
+  }
 };
+
+function openSettings() {
+  document.getElementById('settingsModal').classList.remove('hidden');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.add('hidden');
+}
 
 function saveSettings() {
   const key = document.getElementById('apiKeyInput').value.trim();
   const kbUrl = document.getElementById('kbUrlInput').value.trim();
   const model = document.getElementById('modelSelect').value;
+
   localStorage.setItem('apiKey', key);
   localStorage.setItem('kbUrl', kbUrl);
   localStorage.setItem('model', model);
-  document.getElementById('settingsModal').classList.add('hidden');
+
+  closeSettings();
+
   if (kbUrl) loadKnowledgeBase(kbUrl);
 }
 
-// ---------- 加载知识库 ----------
 async function loadKnowledgeBase(url) {
   document.getElementById('kbStatus').innerHTML = '⏳ 正在加载知识库...';
   try {
-    const res = await fetch(url + '?t=' + Date.now()); // 防缓存
+    const res = await fetch(url + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    knowledgeBase = data.documents || data; // 兼容两种结构
+
+    kbMeta = data;
+    knowledgeBase = data.documents || data || [];
+
     document.getElementById('kbStatus').innerHTML = '✅ 知识库加载成功';
-    document.getElementById('kbCount').innerHTML = `共 ${knowledgeBase.length} 篇文献 | 更新于 ${data.updated_at || '未知'}`;
+    document.getElementById('kbCount').innerHTML = `共 ${knowledgeBase.length} 条知识片段 | 更新于 ${data.updated_at || '未知'}`;
+
+    renderCategoryBar(data.categories || {});
     renderBrowseList();
   } catch (e) {
-    document.getElementById('kbStatus').innerHTML = '❌ 加载失败，请检查地址是否正确';
+    document.getElementById('kbStatus').innerHTML = '❌ 加载失败，请检查知识库地址或 knowledge_base.json 是否存在';
+    document.getElementById('kbCount').innerHTML = '';
     console.error(e);
   }
 }
 
-// ---------- Tab 切换 ----------
+function renderCategoryBar(categories) {
+  const bar = document.getElementById('categoryBar');
+  const entries = Object.entries(categories);
+  if (entries.length === 0) {
+    bar.innerHTML = '';
+    return;
+  }
+
+  bar.innerHTML = entries.map(([name, count]) => `
+    <span class="px-3 py-1 rounded-full bg-white shadow text-xs text-gray-600">
+      ${escapeHtml(name)}：${count}
+    </span>
+  `).join('');
+}
+
 function switchTab(tab) {
   currentTab = tab;
+
   ['tabSearch','tabReview','tabBrowse'].forEach(id => {
     document.getElementById(id).className = "px-4 py-2 rounded-lg bg-white text-gray-600 font-medium shadow";
   });
-  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).className =
-    "px-4 py-2 rounded-lg bg-cyan-600 text-white font-medium shadow";
+
+  const activeId = 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1);
+  document.getElementById(activeId).className = "px-4 py-2 rounded-lg bg-cyan-600 text-white font-medium shadow";
 
   document.getElementById('searchResult').classList.toggle('hidden', tab === 'browse');
   document.getElementById('browseResult').classList.toggle('hidden', tab !== 'browse');
 
   const placeholders = {
     search: "例如：太平洋牡蛎种质标准有哪些？三倍体牡蛎养殖密度控制规范？",
-    review: "例如：牡蛎三倍体育种技术研究进展",
-    browse: "（浏览模式下无需输入，直接查看下方列表）"
+    review: "例如：三倍体牡蛎育种技术研究进展；牡蛎筏式养殖及病害防控研究进展",
+    browse: "浏览模式下无需输入，可在下方查看知识片段"
   };
   document.getElementById('queryInput').placeholder = placeholders[tab];
 }
 
-// ---------- 简易检索（关键词+简单相关性打分） ----------
-function retrieveRelevant(query, topK = 5) {
-  const keywords = query.replace(/[？?，,。.]/g, ' ').split(/\s+/).filter(w => w.length > 1);
-  const scored = knowledgeBase.map(doc => {
-    const text = (doc.title + ' ' + doc.content + ' ' + (doc.category||'')).toLowerCase();
-    let score = 0;
-    keywords.forEach(kw => {
-      const cnt = (text.match(new RegExp(kw.toLowerCase(), 'g')) || []).length;
-      score += cnt;
-    });
-    return { ...doc, score };
+function tokenize(text) {
+  if (!text) return [];
+  const cleaned = text
+    .replace(/[？?，,。.；;：:（）()【】\[\]、]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const parts = cleaned.split(' ').filter(Boolean);
+
+  const extra = [];
+  const importantTerms = [
+    "牡蛎", "生蚝", "太平洋牡蛎", "长牡蛎", "香港牡蛎", "近江牡蛎",
+    "三倍体", "四倍体", "育种", "种质", "标准", "养殖", "规程",
+    "专利", "论文", "苗种", "育苗", "盐度", "温度", "密度", "病害",
+    "筏式", "吊养", "滩涂", "综述"
+  ];
+
+  importantTerms.forEach(term => {
+    if (text.includes(term)) extra.push(term);
   });
-  return scored.sort((a,b) => b.score - a.score).filter(d => d.score > 0).slice(0, topK);
+
+  return Array.from(new Set([...parts, ...extra])).filter(w => w.length >= 2);
 }
 
-// ---------- 提交处理 ----------
+function retrieveRelevant(query, topK = 8) {
+  const keywords = tokenize(query);
+
+  if (knowledgeBase.length === 0) return [];
+
+  const scored = knowledgeBase.map(doc => {
+    const title = doc.title || '';
+    const summary = doc.summary || '';
+    const content = doc.content || '';
+    const category = doc.category || '';
+    const fileName = doc.file_name || '';
+    const source = doc.source || '';
+
+    const full = `${title} ${summary} ${content} ${category} ${fileName} ${source}`.toLowerCase();
+
+    let score = 0;
+
+    keywords.forEach(kw => {
+      const k = kw.toLowerCase();
+
+      if (title.toLowerCase().includes(k)) score += 8;
+      if (summary.toLowerCase().includes(k)) score += 5;
+      if (category.toLowerCase().includes(k)) score += 4;
+      if (fileName.toLowerCase().includes(k)) score += 4;
+      if (source.toLowerCase().includes(k)) score += 3;
+
+      const matches = full.match(new RegExp(escapeRegExp(k), 'g'));
+      if (matches) score += Math.min(matches.length, 10);
+    });
+
+    if (query.includes("综述") && (category.includes("学术") || category.includes("遗传") || category.includes("养殖"))) {
+      score += 3;
+    }
+
+    return { ...doc, score };
+  });
+
+  let result = scored
+    .sort((a,b) => b.score - a.score)
+    .filter(d => d.score > 0)
+    .slice(0, topK);
+
+  if (result.length === 0) {
+    result = scored
+      .sort((a,b) => (b.content_length || 0) - (a.content_length || 0))
+      .slice(0, Math.min(topK, 5));
+  }
+
+  return result;
+}
+
 async function handleSubmit() {
   const query = document.getElementById('queryInput').value.trim();
-  if (!query) return alert('请输入查询内容');
+  if (!query) {
+    alert('请输入查询内容');
+    return;
+  }
+
   if (currentTab === 'search') await doSearch(query);
-  else if (currentTab === 'review') await doReview(query);
+  if (currentTab === 'review') await doReview(query);
 }
 
 document.getElementById('queryInput').addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.key === 'Enter') handleSubmit();
 });
 
-// ---------- AI 问答检索 ----------
 async function doSearch(query) {
   const resultDiv = document.getElementById('searchResult');
-  resultDiv.innerHTML = renderLoading('检索相关文献并生成回答');
 
-  const relevantDocs = retrieveRelevant(query, 6);
-  if (relevantDocs.length === 0) {
-    resultDiv.innerHTML = renderNoResult();
+  if (knowledgeBase.length === 0) {
+    resultDiv.innerHTML = renderNoResult('知识库尚未加载或为空');
     return;
   }
 
-  const context = relevantDocs.map((d,i) => `[文献${i+1}] 《${d.title}》\n来源：${d.source || '未知'}\n内容：${d.content.slice(0,500)}`).join('\n\n');
-  const prompt = `你是生蚝养殖领域的专业助手。请基于以下检索到的文献资料，用中文专业、准确地回答用户问题。回答中请用[文献X]标注引用来源，若资料不足以回答请明确说明。\n\n【检索文献】\n${context}\n\n【用户问题】\n${query}`;
+  resultDiv.innerHTML = renderLoading('正在检索知识库并调用AI生成回答');
+
+  const relevantDocs = retrieveRelevant(query, 8);
+
+  if (relevantDocs.length === 0) {
+    resultDiv.innerHTML = renderNoResult('未检索到相关资料，请上传更多文献到 data/raw 后重建知识库');
+    return;
+  }
+
+  const context = relevantDocs.map((d, i) => {
+    return `[资料${i+1}]
+标题：${d.title || ''}
+分类：${d.category || ''}
+来源：${d.source || d.file_name || '未知'}
+摘要：${d.summary || ''}
+正文片段：${(d.content || '').slice(0, 900)}`;
+  }).join('\n\n');
+
+  const prompt = `你是水产养殖与牡蛎产业领域的专业知识库助手。请严格基于下面检索到的资料回答用户问题。
+
+要求：
+1. 先给出直接结论；
+2. 再分点说明依据；
+3. 必须用[资料1]、[资料2]这样的格式标注引用；
+4. 如果资料不足，请明确说“现有知识库资料不足”，不要编造；
+5. 回答应专业、简明、适合科研和生产应用。
+
+【检索资料】
+${context}
+
+【用户问题】
+${query}`;
 
   const answer = await callLLM(prompt);
+
   resultDiv.innerHTML = `
     <div class="bg-white rounded-2xl shadow p-5">
-      <h3 class="font-bold text-cyan-700 mb-2">🤖 AI 回答</h3>
-      <div class="text-gray-700 whitespace-pre-wrap leading-relaxed">${answer}</div>
+      <h3 class="font-bold text-cyan-700 mb-3">🤖 AI 回答</h3>
+      <div class="text-gray-700 whitespace-pre-wrap leading-relaxed">${escapeHtml(answer)}</div>
     </div>
     <div class="bg-white rounded-2xl shadow p-5">
-      <h3 class="font-bold text-gray-700 mb-3">📎 引用文献</h3>
+      <h3 class="font-bold text-gray-700 mb-3">📎 检索到的引用资料</h3>
       ${relevantDocs.map((d,i) => renderDocCard(d, i+1)).join('')}
-    </div>`;
+    </div>
+  `;
 }
 
-// ---------- 自动文献综述 ----------
 async function doReview(query) {
   const resultDiv = document.getElementById('searchResult');
-  resultDiv.innerHTML = renderLoading('生成文献综述（约需20-40秒）');
 
-  const relevantDocs = retrieveRelevant(query, 10);
-  if (relevantDocs.length === 0) {
-    resultDiv.innerHTML = renderNoResult();
+  if (knowledgeBase.length === 0) {
+    resultDiv.innerHTML = renderNoResult('知识库尚未加载或为空');
     return;
   }
 
-  const context = relevantDocs.map((d,i) => `[${i+1}] 《${d.title}》（${d.source || '未知来源'}）\n${d.content.slice(0,400)}`).join('\n\n');
-  const prompt = `你是水产养殖领域的学术研究助手。请基于以下文献资料，针对主题"${query}"撰写一篇结构完整的中文文献综述，包含以下部分：\n一、研究背景\n二、国内外研究现状\n三、关键技术进展（分点说明）\n四、存在问题与展望\n五、参考文献（列出引用编号对应的文献标题）\n\n要求：语言学术规范，逻辑清晰，字数800-1200字，在正文中用[编号]标注引用。\n\n【参考文献资料】\n${context}`;
+  resultDiv.innerHTML = renderLoading('正在检索资料并生成文献综述，可能需要20到60秒');
 
-  const review = await callLLM(prompt);
+  const relevantDocs = retrieveRelevant(query, 14);
+
+  if (relevantDocs.length === 0) {
+    resultDiv.innerHTML = renderNoResult('未检索到相关资料，建议先上传论文、标准或专利文件');
+    return;
+  }
+
+  const context = relevantDocs.map((d, i) => {
+    return `[${i+1}]
+题名：${d.title || ''}
+类别：${d.category || ''}
+来源：${d.source || d.file_name || '未知'}
+摘要：${d.summary || ''}
+内容：${(d.content || '').slice(0, 1000)}`;
+  }).join('\n\n');
+
+  const prompt = `你是水产养殖领域的学术写作助手。请基于下面资料，围绕主题“${query}”撰写一篇中文文献综述。
+
+写作要求：
+1. 不要脱离资料编造事实；
+2. 正文中使用[1]、[2]等编号引用；
+3. 结构必须包括：
+   一、研究背景
+   二、主要研究进展
+   三、关键技术与应用场景
+   四、存在问题
+   五、发展趋势与建议
+   六、参考资料
+4. 语言要学术、准确、连贯；
+5. 如果资料不足，请在综述开头注明“本文基于当前知识库已有资料进行综述，资料覆盖可能有限”；
+6. 字数控制在1000到1500字。
+
+【资料】
+${context}`;
+
+  const review = await callLLM(prompt, 2500);
+  lastReview = review;
+
   resultDiv.innerHTML = `
     <div class="bg-white rounded-2xl shadow p-5">
-      <h3 class="font-bold text-cyan-700 mb-2">📝 文献综述：${query}</h3>
-      <div class="text-gray-700 whitespace-pre-wrap leading-relaxed">${review}</div>
-      <button onclick="downloadReview('${query}')" class="mt-4 text-sm text-cyan-600 hover:underline">⬇️ 下载为 Markdown</button>
-    </div>`;
-  window._lastReview = review;
+      <h3 class="font-bold text-cyan-700 mb-3">📝 文献综述：${escapeHtml(query)}</h3>
+      <div class="text-gray-700 whitespace-pre-wrap leading-relaxed">${escapeHtml(review)}</div>
+      <button onclick="downloadReview('${escapeAttr(query)}')" class="mt-4 bg-cyan-50 text-cyan-700 px-4 py-2 rounded-lg text-sm hover:bg-cyan-100">
+        ⬇️ 下载为 Markdown
+      </button>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-5">
+      <h3 class="font-bold text-gray-700 mb-3">📚 综述使用的资料</h3>
+      ${relevantDocs.map((d,i) => renderDocCard(d, i+1)).join('')}
+    </div>
+  `;
 }
 
-function downloadReview(title) {
-  const blob = new Blob([`# ${title}\n\n${window._lastReview}`], {type: 'text/markdown'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${title}_综述.md`;
-  a.click();
-}
-
-// ---------- 调用大模型 API ----------
-async function callLLM(prompt) {
+async function callLLM(prompt, maxTokens = 1800) {
   const apiKey = localStorage.getItem('apiKey');
-  const model = localStorage.getItem('model') || 'Qwen/Qwen2.5-7B-Instruct';
-  if (!apiKey) return '⚠️ 请先在右上角⚙️设置中填入 API Key';
+  const model = localStorage.getItem('model') || 'deepseek-ai/DeepSeek-V3';
+
+  if (!apiKey) {
+    return '⚠️ 请先在右上角设置中填入 API Key。';
+  }
 
   try {
     const res = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
@@ -262,66 +422,90 @@ async function callLLM(prompt) {
       },
       body: JSON.stringify({
         model: model,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 1500
+        messages: [
+          { role: 'system', content: '你是严谨的水产养殖、生蚝/牡蛎种质与养殖技术知识库助手。回答必须基于用户提供的资料。' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.25,
+        max_tokens: maxTokens
       })
     });
+
     const data = await res.json();
-    if (data.error) return '❌ API错误：' + data.error.message;
-    return data.choices[0].message.content;
+
+    if (!res.ok) {
+      return '❌ API请求失败：' + JSON.stringify(data);
+    }
+
+    if (data.error) {
+      return '❌ API错误：' + (data.error.message || JSON.stringify(data.error));
+    }
+
+    return data.choices?.[0]?.message?.content || '❌ API未返回有效内容';
   } catch (e) {
     return '❌ 请求失败：' + e.message;
   }
 }
 
-// ---------- 渲染辅助函数 ----------
 function renderLoading(text) {
   return `<div class="bg-white rounded-2xl shadow p-8 text-center text-gray-500">
-    <span class="loading-dot">⏳</span> ${text}...
+    <span class="loading-dot">⏳</span> ${escapeHtml(text)}...
   </div>`;
 }
-function renderNoResult() {
+
+function renderNoResult(text) {
   return `<div class="bg-white rounded-2xl shadow p-8 text-center text-gray-400">
-    😕 未检索到相关文献，请尝试更换关键词，或确认知识库已加载
+    😕 ${escapeHtml(text)}
   </div>`;
 }
+
 function renderDocCard(d, idx) {
-  return `<div class="border-l-4 border-cyan-400 pl-3 py-2 mb-2">
-    <div class="font-medium text-sm text-gray-800">[${idx}] ${d.title}</div>
-    <div class="text-xs text-gray-400 mt-0.5">${d.category || ''} · ${d.source || '未知来源'} ${d.date ? '· '+d.date : ''}</div>
-    <div class="text-xs text-gray-500 mt-1 line-clamp-2">${d.content.slice(0,120)}...</div>
+  return `<div class="border-l-4 border-cyan-400 pl-3 py-3 mb-3 bg-gray-50 rounded-r-lg">
+    <div class="font-medium text-sm text-gray-800">[${idx}] ${escapeHtml(d.title || '未命名资料')}</div>
+    <div class="text-xs text-gray-400 mt-1">
+      ${escapeHtml(d.category || '未分类')} · ${escapeHtml(d.source || d.file_name || '未知来源')}
+      ${d.content_length ? ' · ' + d.content_length + '字' : ''}
+    </div>
+    <div class="text-xs text-gray-600 mt-2">${escapeHtml((d.summary || d.content || '').slice(0, 220))}...</div>
   </div>`;
 }
+
 function renderBrowseList() {
   const div = document.getElementById('browseResult');
-  div.innerHTML = knowledgeBase.map((d,i) => renderDocCard(d, i+1)).join('') ||
-    '<div class="text-center text-gray-400 py-6">知识库为空</div>';
+
+  if (!knowledgeBase || knowledgeBase.length === 0) {
+    div.innerHTML = '<div class="text-center text-gray-400 py-6">知识库为空</div>';
+    return;
+  }
+
+  div.innerHTML = knowledgeBase.map((d,i) => renderDocCard(d, i+1)).join('');
+}
+
+function downloadReview(title) {
+  const content = `# ${title}\n\n${lastReview}`;
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${title}_文献综述.md`;
+  a.click();
+}
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function escapeAttr(str) {
+  return String(str || '').replaceAll("'", "\\'");
+}
+
+function escapeRegExp(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 </script>
-<script>window.parent.postMessage({ action: "ready" }, "*"); 
- 
-window.console = new Proxy(console, {
-  get(target, prop) {
-    if (['log', 'warn', 'error'].includes(prop)) {
-      return new Proxy(target[prop], {
-        apply(fn, thisArg, args) {
-          fn.apply(thisArg, args);
-          window.parent.postMessage({ action: 'console', 
-            type: prop, 
-            args: args.map((arg) => {
-              try {
-                return JSON.stringify(arg).replace(/^["']|["']$/g, '');
-              } catch (e) {
-                return arg;
-              }
-            }) 
-          }, '*');
-        }
-      });
-    }
-    return target[prop];
-  }
-});
-</script></body>
+</body>
 </html>
