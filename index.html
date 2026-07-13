@@ -53,7 +53,7 @@
     <textarea id="queryInput" rows="3" placeholder="例如：太平洋牡蛎种质标准有哪些？三倍体牡蛎养殖密度控制规范？"
       class="w-full border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-none"></textarea>
     <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 mt-3">
-      <span class="text-xs text-gray-400">Ctrl+Enter 快速提交。回答质量取决于 knowledge_base.json 中的资料数量和质量。</span>
+      <span class="text-xs text-gray-400">Ctrl+Enter 快速提交。涉及标准编号时，AI 只能依据带 URL 的资料回答。</span>
       <button id="submitBtn" onclick="handleSubmit()" class="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-lg font-medium shadow transition">
         提交查询
       </button>
@@ -79,9 +79,11 @@
 
     <label class="block text-sm text-gray-600 mb-1">模型选择</label>
     <select id="modelSelect" class="w-full border rounded-lg p-2 mb-4 text-sm">
-      <option value="deepseek-ai/DeepSeek-V3">deepseek-ai/DeepSeek-V3（推荐）</option>
-      <option value="deepseek-ai/DeepSeek-R1">deepseek-ai/DeepSeek-R1（推理强，可能较慢）</option>
+      <option value="deepseek-ai/DeepSeek-V3">deepseek-ai/DeepSeek-V3</option>
+      <option value="deepseek-ai/DeepSeek-R1">deepseek-ai/DeepSeek-R1</option>
       <option value="Qwen/Qwen2.5-7B-Instruct">Qwen/Qwen2.5-7B-Instruct</option>
+      <option value="Qwen/Qwen2.5-14B-Instruct">Qwen/Qwen2.5-14B-Instruct</option>
+      <option value="THUDM/glm-4-9b-chat">THUDM/glm-4-9b-chat</option>
     </select>
 
     <div class="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg p-3 mb-4">
@@ -141,16 +143,23 @@ function saveSettings() {
 
 async function loadKnowledgeBase(url) {
   document.getElementById('kbStatus').innerHTML = '⏳ 正在加载知识库...';
+
   try {
     const res = await fetch(url + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
 
+    const data = await res.json();
     kbMeta = data;
     knowledgeBase = data.documents || data || [];
 
+    const total = knowledgeBase.length;
+    const urlCount = data.url_count !== undefined
+      ? data.url_count
+      : knowledgeBase.filter(d => d.url).length;
+
     document.getElementById('kbStatus').innerHTML = '✅ 知识库加载成功';
-    document.getElementById('kbCount').innerHTML = `共 ${knowledgeBase.length} 条知识片段 | 更新于 ${data.updated_at || '未知'}`;
+    document.getElementById('kbCount').innerHTML =
+      `共 ${total} 条知识片段 | 带URL ${urlCount} 条 | 更新于 ${data.updated_at || '未知'}`;
 
     renderCategoryBar(data.categories || {});
     renderBrowseList();
@@ -164,6 +173,7 @@ async function loadKnowledgeBase(url) {
 function renderCategoryBar(categories) {
   const bar = document.getElementById('categoryBar');
   const entries = Object.entries(categories);
+
   if (entries.length === 0) {
     bar.innerHTML = '';
     return;
@@ -192,13 +202,14 @@ function switchTab(tab) {
   const placeholders = {
     search: "例如：太平洋牡蛎种质标准有哪些？三倍体牡蛎养殖密度控制规范？",
     review: "例如：三倍体牡蛎育种技术研究进展；牡蛎筏式养殖及病害防控研究进展",
-    browse: "浏览模式下无需输入，可在下方查看知识片段"
+    browse: "浏览模式下无需输入，可在下方查看知识片段及 URL"
   };
   document.getElementById('queryInput').placeholder = placeholders[tab];
 }
 
 function tokenize(text) {
   if (!text) return [];
+
   const cleaned = text
     .replace(/[？?，,。.；;：:（）()【】\[\]、]/g, ' ')
     .replace(/\s+/g, ' ')
@@ -206,25 +217,37 @@ function tokenize(text) {
 
   const parts = cleaned.split(' ').filter(Boolean);
 
-  const extra = [];
   const importantTerms = [
     "牡蛎", "生蚝", "太平洋牡蛎", "长牡蛎", "香港牡蛎", "近江牡蛎",
-    "三倍体", "四倍体", "育种", "种质", "标准", "养殖", "规程",
-    "专利", "论文", "苗种", "育苗", "盐度", "温度", "密度", "病害",
-    "筏式", "吊养", "滩涂", "综述"
+    "三倍体", "四倍体", "二倍体", "育种", "种质", "种质资源", "良种",
+    "标准", "国家标准", "行业标准", "地方标准", "养殖", "规程", "技术规范",
+    "专利", "论文", "摘要", "苗种", "育苗", "人工育苗", "盐度", "温度",
+    "密度", "病害", "弧菌", "夏季死亡", "筏式", "吊养", "滩涂", "综述",
+    "Crassostrea", "oyster", "aquaculture", "breeding", "triploid"
   ];
 
+  const extra = [];
   importantTerms.forEach(term => {
-    if (text.includes(term)) extra.push(term);
+    if (text.toLowerCase().includes(term.toLowerCase())) extra.push(term);
   });
 
   return Array.from(new Set([...parts, ...extra])).filter(w => w.length >= 2);
+}
+
+function isStandardQuery(query) {
+  const terms = [
+    "标准", "国标", "国家标准", "行业标准", "地方标准", "标准号",
+    "GB", "GB/T", "SC", "SC/T", "DB", "规范", "规程"
+  ];
+  return terms.some(t => query.toLowerCase().includes(t.toLowerCase()));
 }
 
 function retrieveRelevant(query, topK = 8) {
   const keywords = tokenize(query);
 
   if (knowledgeBase.length === 0) return [];
+
+  const standardMode = isStandardQuery(query);
 
   const scored = knowledgeBase.map(doc => {
     const title = doc.title || '';
@@ -233,8 +256,10 @@ function retrieveRelevant(query, topK = 8) {
     const category = doc.category || '';
     const fileName = doc.file_name || '';
     const source = doc.source || '';
+    const url = doc.url || '';
+    const domain = doc.domain || '';
 
-    const full = `${title} ${summary} ${content} ${category} ${fileName} ${source}`.toLowerCase();
+    const full = `${title} ${summary} ${content} ${category} ${fileName} ${source} ${url} ${domain}`.toLowerCase();
 
     let score = 0;
 
@@ -246,10 +271,21 @@ function retrieveRelevant(query, topK = 8) {
       if (category.toLowerCase().includes(k)) score += 4;
       if (fileName.toLowerCase().includes(k)) score += 4;
       if (source.toLowerCase().includes(k)) score += 3;
+      if (url.toLowerCase().includes(k)) score += 3;
+      if (domain.toLowerCase().includes(k)) score += 3;
 
       const matches = full.match(new RegExp(escapeRegExp(k), 'g'));
       if (matches) score += Math.min(matches.length, 10);
     });
+
+    if (url) score += 3;
+
+    if (standardMode) {
+      if (url) score += 8;
+      if (category.includes("种质标准")) score += 6;
+      if (source.includes("标准") || title.includes("标准") || content.includes("标准")) score += 5;
+      if (!url) score -= 10;
+    }
 
     if (query.includes("综述") && (category.includes("学术") || category.includes("遗传") || category.includes("养殖"))) {
       score += 3;
@@ -274,6 +310,7 @@ function retrieveRelevant(query, topK = 8) {
 
 async function handleSubmit() {
   const query = document.getElementById('queryInput').value.trim();
+
   if (!query) {
     alert('请输入查询内容');
     return;
@@ -297,10 +334,10 @@ async function doSearch(query) {
 
   resultDiv.innerHTML = renderLoading('正在检索知识库并调用AI生成回答');
 
-  const relevantDocs = retrieveRelevant(query, 8);
+  const relevantDocs = retrieveRelevant(query, 10);
 
   if (relevantDocs.length === 0) {
-    resultDiv.innerHTML = renderNoResult('未检索到相关资料，请上传更多文献到 data/raw 后重建知识库');
+    resultDiv.innerHTML = renderNoResult('未检索到相关资料，请检查知识库或扩大抓取来源');
     return;
   }
 
@@ -309,18 +346,26 @@ async function doSearch(query) {
 标题：${d.title || ''}
 分类：${d.category || ''}
 来源：${d.source || d.file_name || '未知'}
+来源类型：${d.source_type || ''}
+是否有URL：${d.url ? '是' : '否'}
+URL：${d.url || '无'}
+域名：${d.domain || '无'}
+日期：${d.date || '无'}
 摘要：${d.summary || ''}
 正文片段：${(d.content || '').slice(0, 900)}`;
   }).join('\n\n');
 
   const prompt = `你是水产养殖与牡蛎产业领域的专业知识库助手。请严格基于下面检索到的资料回答用户问题。
 
-要求：
-1. 先给出直接结论；
-2. 再分点说明依据；
-3. 必须用[资料1]、[资料2]这样的格式标注引用；
-4. 如果资料不足，请明确说“现有知识库资料不足”，不要编造；
-5. 回答应专业、简明、适合科研和生产应用。
+强制规则：
+1. 涉及国家标准、行业标准、地方标准、标准编号、发布日期、适用范围时，只能引用“是否有URL：是”的资料作为依据；
+2. 如果检索资料没有URL，或URL不是权威来源，不得把它当作标准依据；
+3. 如果没有带URL的权威标准来源，请明确回答：“现有知识库没有检索到可核验的标准来源链接”；
+4. 不得编造标准编号、年份、标准名称、适用范围；
+5. 普通养殖技术、论文进展可以参考无URL本地资料，但必须注明资料来源限制；
+6. 回答中必须列出引用资料编号和对应URL；
+7. 若资料之间相互矛盾，应指出矛盾并以带URL的权威来源优先；
+8. 不要把搜索片段当作论文全文结论，只能作为题录/摘要线索。
 
 【检索资料】
 ${context}
@@ -352,10 +397,10 @@ async function doReview(query) {
 
   resultDiv.innerHTML = renderLoading('正在检索资料并生成文献综述，可能需要20到60秒');
 
-  const relevantDocs = retrieveRelevant(query, 14);
+  const relevantDocs = retrieveRelevant(query, 16);
 
   if (relevantDocs.length === 0) {
-    resultDiv.innerHTML = renderNoResult('未检索到相关资料，建议先上传论文、标准或专利文件');
+    resultDiv.innerHTML = renderNoResult('未检索到相关资料，建议扩大自动抓取来源或上传资料');
     return;
   }
 
@@ -364,6 +409,11 @@ async function doReview(query) {
 题名：${d.title || ''}
 类别：${d.category || ''}
 来源：${d.source || d.file_name || '未知'}
+来源类型：${d.source_type || ''}
+是否有URL：${d.url ? '是' : '否'}
+URL：${d.url || '无'}
+域名：${d.domain || '无'}
+日期：${d.date || '无'}
 摘要：${d.summary || ''}
 内容：${(d.content || '').slice(0, 1000)}`;
   }).join('\n\n');
@@ -382,12 +432,15 @@ async function doReview(query) {
    六、参考资料
 4. 语言要学术、准确、连贯；
 5. 如果资料不足，请在综述开头注明“本文基于当前知识库已有资料进行综述，资料覆盖可能有限”；
-6. 字数控制在1000到1500字。
+6. 字数控制在1000到1500字；
+7. 参考资料部分必须列出 URL；没有 URL 的资料需标注“无外部链接，仅作辅助参考”；
+8. 涉及标准编号时，只有带 URL 的权威来源才可作为依据；
+9. 对于知网、百度学术、谷歌学术、万方、维普等搜索结果片段，只能表述为“题录/摘要线索”，不能当成全文证据。
 
 【资料】
 ${context}`;
 
-  const review = await callLLM(prompt, 2500);
+  const review = await callLLM(prompt, 2600);
   lastReview = review;
 
   resultDiv.innerHTML = `
@@ -423,10 +476,13 @@ async function callLLM(prompt, maxTokens = 1800) {
       body: JSON.stringify({
         model: model,
         messages: [
-          { role: 'system', content: '你是严谨的水产养殖、生蚝/牡蛎种质与养殖技术知识库助手。回答必须基于用户提供的资料。' },
+          {
+            role: 'system',
+            content: '你是严谨的水产养殖、生蚝/牡蛎种质与养殖技术知识库助手。必须基于用户提供的资料回答。涉及标准编号时，只有带URL的权威资料才能作为依据。'
+          },
           { role: 'user', content: prompt }
         ],
-        temperature: 0.25,
+        temperature: 0.2,
         max_tokens: maxTokens
       })
     });
@@ -460,13 +516,31 @@ function renderNoResult(text) {
 }
 
 function renderDocCard(d, idx) {
-  return `<div class="border-l-4 border-cyan-400 pl-3 py-3 mb-3 bg-gray-50 rounded-r-lg">
+  const url = d.url || '';
+  const source = d.source || d.file_name || '未知来源';
+  const hasUrl = !!url;
+
+  return `<div class="border-l-4 ${hasUrl ? 'border-cyan-400' : 'border-amber-400'} pl-3 py-3 mb-3 bg-gray-50 rounded-r-lg">
     <div class="font-medium text-sm text-gray-800">[${idx}] ${escapeHtml(d.title || '未命名资料')}</div>
-    <div class="text-xs text-gray-400 mt-1">
-      ${escapeHtml(d.category || '未分类')} · ${escapeHtml(d.source || d.file_name || '未知来源')}
+
+    <div class="text-xs text-gray-500 mt-1">
+      分类：${escapeHtml(d.category || '未分类')}
+      · 来源：${escapeHtml(source)}
+      ${d.source_type ? ' · 类型：' + escapeHtml(d.source_type) : ''}
+      ${d.domain ? ' · 域名：' + escapeHtml(d.domain) : ''}
+      ${d.date ? ' · 日期：' + escapeHtml(d.date) : ''}
       ${d.content_length ? ' · ' + d.content_length + '字' : ''}
     </div>
-    <div class="text-xs text-gray-600 mt-2">${escapeHtml((d.summary || d.content || '').slice(0, 220))}...</div>
+
+    ${
+      hasUrl
+        ? `<div class="text-xs mt-1">
+             🔗 <a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer" class="text-cyan-700 hover:underline break-all">${escapeHtml(url)}</a>
+           </div>`
+        : `<div class="text-xs mt-1 text-amber-600">⚠️ 无外部 URL：仅作为本地/辅助资料，涉及标准编号时不能作为权威依据。</div>`
+    }
+
+    <div class="text-xs text-gray-600 mt-2">${escapeHtml((d.summary || d.content || '').slice(0, 280))}...</div>
   </div>`;
 }
 
@@ -478,7 +552,12 @@ function renderBrowseList() {
     return;
   }
 
-  div.innerHTML = knowledgeBase.map((d,i) => renderDocCard(d, i+1)).join('');
+  div.innerHTML = `
+    <div class="mb-4 p-3 rounded-lg bg-cyan-50 text-xs text-cyan-800">
+      当前共 ${knowledgeBase.length} 条资料。带 URL 的资料可作为可追溯来源；无 URL 的本地资料仅作辅助参考，涉及标准编号时不能作为权威依据。
+    </div>
+    ${knowledgeBase.map((d,i) => renderDocCard(d, i+1)).join('')}
+  `;
 }
 
 function downloadReview(title) {
@@ -500,7 +579,12 @@ function escapeHtml(str) {
 }
 
 function escapeAttr(str) {
-  return String(str || '').replaceAll("'", "\\'");
+  return String(str || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 }
 
 function escapeRegExp(str) {
