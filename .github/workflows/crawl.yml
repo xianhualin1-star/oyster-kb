@@ -1,18 +1,19 @@
 
-name: 每日爬取生蚝知识库
+name: 构建生蚝AI知识库
 
 on:
   schedule:
-    # 每天北京时间 10:00 运行（UTC 02:00）
+    # 每天北京时间 10:00 自动运行，UTC 时间 02:00
     - cron: '0 2 * * *'
-  workflow_dispatch: {}   # 允许手动触发
+  workflow_dispatch: {}
 
 permissions:
   contents: write
 
 jobs:
-  crawl:
+  build-kb:
     runs-on: ubuntu-latest
+
     steps:
       - name: 检出仓库代码
         uses: actions/checkout@v4
@@ -24,16 +25,28 @@ jobs:
 
       - name: 安装依赖
         run: |
-          pip install requests beautifulsoup4 pdfplumber lxml
+          python -m pip install --upgrade pip
+          pip install pdfplumber python-docx openpyxl pandas lxml beautifulsoup4 requests
 
-      - name: 运行爬虫脚本
+      - name: 构建知识库
         run: |
           python scripts/crawl.py
+
+      - name: 显示知识库文件信息
+        run: |
+          ls -lh knowledge_base.json
+          python - <<'PY'
+          import json
+          with open("knowledge_base.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
+          print("总知识片段数:", data.get("total"))
+          print("分类统计:", data.get("categories"))
+          PY
 
       - name: 提交更新后的知识库文件
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add knowledge_base.json
-          git diff --staged --quiet || git commit -m "🤖 自动更新生蚝知识库 $(date +'%Y-%m-%d %H:%M')"
+          git diff --staged --quiet || git commit -m "🤖 自动构建生蚝AI知识库 $(date +'%Y-%m-%d %H:%M')"
           git push
