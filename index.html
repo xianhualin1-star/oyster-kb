@@ -33,7 +33,7 @@
 
     <nav class="flex flex-wrap gap-2 mb-4">
       <button id="tabSearch" onclick="switchTab('search')" class="tab-button px-4 py-2 rounded-lg shadow-sm bg-cyan-600 text-white">🔍 AI问答检索</button>
-      <button id="tabReview" onclick="switchTab('review')" class="tab-button px-4 py-2 rounded-lg shadow-sm bg-white text-slate-600">📝 5000字文献综述</button>
+      <button id="tabReview" onclick="switchTab('review')" class="tab-button px-4 py-2 rounded-lg shadow-sm bg-white text-slate-600">📝 文献综述</button>
       <button id="tabBrowse" onclick="switchTab('browse')" class="tab-button px-4 py-2 rounded-lg shadow-sm bg-white text-slate-600">📚 浏览文献库</button>
     </nav>
 
@@ -176,8 +176,12 @@ function switchTab(tab) {
   document.getElementById("browseResult").classList.toggle("hidden", tab !== "browse");
 
   const input = document.getElementById("queryInput");
-  if (tab === "search") input.placeholder = "例如：太平洋牡蛎种质标准有哪些？";
-  if (tab === "review") input.placeholder = "例如：写一篇太平洋牡蛎种质标准的详细综述，字数5000字";
+  if (tab === "search") {
+    input.placeholder = "例如：太平洋牡蛎种质标准有哪些？";
+  }
+  if (tab === "review") {
+    input.placeholder = "例如：太平洋牡蛎种质资源研究进展；要求重点分析三倍体育种与养殖应用";
+  }
 }
 
 document.getElementById("queryInput").addEventListener("keydown", e => {
@@ -198,8 +202,16 @@ function tokenize(text) {
     "养殖", "育苗", "苗种", "三倍体", "四倍体", "育种", "病害", "弧菌",
     "夏季死亡", "筏式", "吊养", "专利", "论文", "综述", "Crassostrea", "oyster"
   ];
-  const parts = String(text).replace(/[，。；、？?！!：:（）()]/g, " ").split(/\s+/).filter(x => x.length >= 2);
-  terms.forEach(t => { if (text.toLowerCase().includes(t.toLowerCase())) parts.push(t); });
+
+  const parts = String(text)
+    .replace(/[，。；、？?！!：:（）()]/g, " ")
+    .split(/\s+/)
+    .filter(x => x.length >= 2);
+
+  terms.forEach(t => {
+    if (text.toLowerCase().includes(t.toLowerCase())) parts.push(t);
+  });
+
   return [...new Set(parts)];
 }
 
@@ -228,8 +240,10 @@ function retrieveLocal(query, topK = 10) {
     if (standard && doc.url) score += 8;
     if (standard && !doc.url) score -= 8;
 
-    return {...doc, score, retrieval_origin: "文献库"};
-  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, topK);
+    return { ...doc, score, retrieval_origin: "文献库" };
+  }).filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK);
 }
 
 async function searchOnline(query) {
@@ -242,10 +256,12 @@ async function searchOnline(query) {
     `https://serpapi.com/search.json?engine=google_scholar&q=${encodeURIComponent(safeQuery)}&hl=zh-cn&num=8&api_key=${encodeURIComponent(apiKey)}`
   ];
 
-  const responses = await Promise.allSettled(endpoints.map(url => fetch(url).then(r => {
-    if (!r.ok) throw new Error("联网搜索 HTTP " + r.status);
-    return r.json();
-  })));
+  const responses = await Promise.allSettled(
+    endpoints.map(url => fetch(url).then(r => {
+      if (!r.ok) throw new Error("联网搜索 HTTP " + r.status);
+      return r.json();
+    }))
+  );
 
   const docs = [];
 
@@ -258,6 +274,7 @@ async function searchOnline(query) {
       const url = item.link || "";
       const publication = item.publication_info?.summary || "";
       const snippet = item.snippet || publication || "";
+
       if (!title || !url) return;
 
       docs.push({
@@ -279,6 +296,7 @@ async function searchOnline(query) {
   });
 
   const seen = new Set();
+
   return docs.filter(d => {
     const key = d.url.toLowerCase();
     if (seen.has(key)) return false;
@@ -289,6 +307,7 @@ async function searchOnline(query) {
 
 function mergeDocs(localDocs, onlineDocs) {
   const seen = new Set();
+
   return [...onlineDocs, ...localDocs].filter(doc => {
     const key = (doc.url || doc.id || doc.title).toLowerCase();
     if (seen.has(key)) return false;
@@ -316,12 +335,14 @@ async function doSearch(query) {
   }
 
   const docs = mergeDocs(localDocs, onlineDocs).slice(0, 16);
+
   if (!docs.length) {
     target.innerHTML = renderNoResult("没有检索到相关资料。请配置 SerpAPI Key 或等待每日文献库更新。");
     return;
   }
 
   const answer = await generateAnswer(query, docs);
+
   target.innerHTML = `
     <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
       <div class="flex items-center justify-between gap-2 mb-3">
@@ -339,6 +360,7 @@ async function doSearch(query) {
 
 async function generateAnswer(query, docs) {
   const context = buildContext(docs, 950);
+
   const prompt = `你是严谨的牡蛎（水产养殖）知识库助手。请基于以下“文献库资料”和“实时网络检索资料”回答问题。
 
 规则：
@@ -354,71 +376,57 @@ ${context}
 【问题】
 ${query}`;
 
-  return callLLM(prompt, 2800);
+  return callLLM(prompt);
 }
 
 async function doReview(query) {
   const target = document.getElementById("searchResult");
-  target.innerHTML = renderLoading("正在检索文献库和实时网络资料，并分段生成约5000字综述");
+  target.innerHTML = renderLoading("正在检索文献库和实时网络资料，并生成文献综述");
 
   const localDocs = retrieveLocal(query, 16);
   let onlineDocs = [];
+
   try {
     onlineDocs = await searchOnline(query);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 
   const docs = mergeDocs(localDocs, onlineDocs).slice(0, 22);
+
   if (!docs.length) {
     target.innerHTML = renderNoResult("没有可用于综述的资料。");
     return;
   }
 
-  const context = buildContext(docs, 800);
-  const sections = [
-    ["一、研究背景与概念界定", "约800—1000字"],
-    ["二、国内外研究进展与主要成果", "约1200—1400字"],
-    ["三、关键技术、方法与应用场景", "约1000—1200字"],
-    ["四、存在问题、证据局限与争议", "约800—1000字"],
-    ["五、发展趋势、建议与参考资料", "约1000—1200字；末尾列出全部引用URL"]
-  ];
+  const context = buildContext(docs, 900);
 
-  const generated = [];
-  for (let i = 0; i < sections.length; i++) {
-    target.innerHTML = renderLoading(`正在生成第 ${i + 1}/${sections.length} 部分：${sections[i][0]}`);
+  const prompt = `你是水产养殖领域的学术写作助手。请基于以下资料，围绕用户主题撰写中文文献综述。
 
-    const prompt = `你是水产养殖领域的学术写作助手。围绕主题《${query}》撰写文献综述的指定部分。
-
-总目标：全文约5000个中文汉字。当前只输出：${sections[i][0]}，长度要求：${sections[i][1]}。
-必须使用中文学术表达，并严格依据资料。对证据不足的内容明确说明局限，不能编造标准、实验数据、论文结论。
-
-引用规则：
-- 正文中使用[1]、[2]等编号；
-- 标准编号、标准年份、适用范围只能引用带URL的可核验资料；
-- 搜索摘要或题录只能称为“题录/摘要线索”，不得说成已核验全文；
-- 最后一部分必须包含“参考资料与链接”，逐条写出编号、题名、来源、URL；
-- 不重复其他部分已经可预期出现的段落。
+写作原则：
+1. 文献综述的篇幅、层级和详细程度，应根据用户问题中的明确要求自动决定；用户没有指定字数时，按主题复杂度写出完整、充分的综述；
+2. 不要将文章标题固定写为“5000字文献综述”，也不要在正文中声明固定字数；
+3. 结构可根据主题自动调整，通常应包括研究背景、主要进展、关键技术/方法、应用情况、问题与局限、趋势与建议、参考资料；
+4. 不得脱离资料编造事实、标准编号、数据或研究结论；
+5. 标准编号、年份、适用范围只能依据有 URL 的可核验资料；
+6. 搜索引擎结果、Google Scholar 题录、知网/万方/维普摘要片段只能作为题录或摘要线索，不可表述为已核验全文；
+7. 正文使用[1]、[2]等编号引用；结尾“参考资料与链接”逐条列出题名、来源、URL；
+8. 无 URL 的本地资料可作辅助参考，但要在参考资料中注明“无外部链接，仅作辅助参考”。
 
 【资料】
 ${context}
 
-【已完成部分摘要】
-${generated.map((t, n) => `第${n + 1}部分：${t.slice(0, 450)}`).join("\n") || "尚无"}
+【用户的综述要求】
+${query}`;
 
-请只输出“${sections[i][0]}”的完整正文。`;
-
-    generated.push(await callLLM(prompt, 3600));
-  }
-
-  lastReview = generated.join("\n\n");
+  lastReview = await callLLM(prompt);
   const characterCount = lastReview.replace(/\s/g, "").length;
 
   target.innerHTML = `
     <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
         <h2 class="font-bold text-cyan-700">📝 文献综述：${escapeHtml(query)}</h2>
-        <span class="text-xs text-slate-400">当前约 ${characterCount} 字（目标约5000字）</span>
+        <span class="text-xs text-slate-400">当前生成约 ${characterCount} 字</span>
       </div>
       <div class="whitespace-pre-wrap leading-7 text-slate-700">${escapeHtml(lastReview)}</div>
       <button onclick="downloadReview()" class="mt-5 px-4 py-2 rounded-lg bg-cyan-50 text-cyan-700 hover:bg-cyan-100 text-sm">⬇️ 下载 Markdown</button>
@@ -442,11 +450,13 @@ URL：${d.url || "无"}
 正文片段：${(d.content || "").slice(0, maxContent)}`).join("\n\n");
 }
 
-async function callLLM(prompt, maxTokens) {
+async function callLLM(prompt) {
   const apiKey = localStorage.getItem("apiKey");
   const model = localStorage.getItem("model") || "deepseek-ai/DeepSeek-V3";
 
-  if (!apiKey) return "⚠️ 未配置硅基流动 API Key，请在右上角设置中填写。";
+  if (!apiKey) {
+    return "⚠️ 未配置硅基流动 API Key，请在右上角设置中填写。";
+  }
 
   try {
     const res = await fetch("https://api.siliconflow.cn/v1/chat/completions", {
@@ -460,17 +470,20 @@ async function callLLM(prompt, maxTokens) {
         messages: [
           {
             role: "system",
-            content: "你是严谨的水产养殖科研助手。不得编造标准、论文、数据和来源。"
+            content: "你是严谨的水产养殖科研助手。不得编造标准、论文、数据和来源。请遵循用户对文章长度和结构的要求。"
           },
           { role: "user", content: prompt }
         ],
-        temperature: 0.25,
-        max_tokens: maxTokens
+        temperature: 0.25
       })
     });
 
     const data = await res.json();
-    if (!res.ok) return "❌ AI API 请求失败：" + (data.message || data.error?.message || JSON.stringify(data));
+
+    if (!res.ok) {
+      return "❌ AI API 请求失败：" + (data.message || data.error?.message || JSON.stringify(data));
+    }
+
     return data.choices?.[0]?.message?.content || "❌ AI 未返回正文。";
   } catch (error) {
     return "❌ 调用 AI 失败：" + error.message;
@@ -479,6 +492,7 @@ async function callLLM(prompt, maxTokens) {
 
 function renderBrowseList() {
   const target = document.getElementById("browseResult");
+
   if (!knowledgeBase.length) {
     target.innerHTML = `<p class="text-center text-slate-400 py-8">文献库暂无资料。</p>`;
     return;
@@ -488,12 +502,13 @@ function renderBrowseList() {
     <div class="mb-4 p-3 rounded-lg bg-cyan-50 text-xs text-cyan-800">
       文献库采用增量更新：每日新增资料会追加保存，历史资料不会因自动更新而删除。浏览资料时请优先核验 URL。
     </div>
-    ${knowledgeBase.map((doc, i) => renderDocCard({...doc, retrieval_origin: "文献库"}, i + 1)).join("")}
+    ${knowledgeBase.map((doc, i) => renderDocCard({ ...doc, retrieval_origin: "文献库" }, i + 1)).join("")}
   `;
 }
 
 function renderDocCard(doc, index) {
   const url = doc.url || "";
+
   return `<article class="border-l-4 ${url ? "border-cyan-400" : "border-amber-400"} bg-slate-50 rounded-r-lg p-3 mb-3">
     <h3 class="font-medium text-sm text-slate-800">[${index}] ${escapeHtml(doc.title || "未命名资料")}</h3>
     <p class="text-xs text-slate-500 mt-1">
@@ -520,7 +535,10 @@ function renderNoResult(text) {
 
 function downloadReview() {
   const topic = document.getElementById("queryInput").value.trim() || "牡蛎文献综述";
-  const blob = new Blob([`# ${topic}\n\n${lastReview}`], {type: "text/markdown;charset=utf-8"});
+  const blob = new Blob([`# ${topic}\n\n${lastReview}`], {
+    type: "text/markdown;charset=utf-8"
+  });
+
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = `${topic}_文献综述.md`;
@@ -529,15 +547,21 @@ function downloadReview() {
 }
 
 function getDomain(url) {
-  try { return new URL(url).hostname; } catch { return ""; }
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return "";
+  }
 }
 
 function hashCode(value) {
   let hash = 0;
+
   for (let i = 0; i < value.length; i++) {
     hash = ((hash << 5) - hash) + value.charCodeAt(i);
     hash |= 0;
   }
+
   return Math.abs(hash);
 }
 
