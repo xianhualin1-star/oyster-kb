@@ -250,7 +250,7 @@ async function searchOnline(query) {
   const apiKey = localStorage.getItem("serpApiKey");
   if (!apiKey) return [];
 
-  const safeQuery = `牡蛎 OR 生蚝 OR 太平洋牡蛎 ${query}`;
+  const safeQuery = query;
   const endpoints = [
     `https://serpapi.com/search.json?engine=google&q=${encodeURIComponent(safeQuery)}&hl=zh-cn&num=8&api_key=${encodeURIComponent(apiKey)}`,
     `https://serpapi.com/search.json?engine=google_scholar&q=${encodeURIComponent(safeQuery)}&hl=zh-cn&num=8&api_key=${encodeURIComponent(apiKey)}`
@@ -361,7 +361,7 @@ async function doSearch(query) {
 async function generateAnswer(query, docs) {
   const context = buildContext(docs, 950);
 
-  const prompt = `你是严谨的牡蛎（水产养殖）知识库助手。请基于以下“文献库资料”和“实时网络检索资料”回答问题。
+  const prompt = `你是严谨的水产养殖知识库助手。优先依据用户问题所涉及的物种和主题回答。同时基于以下“文献库资料”和“实时网络检索资料”回答问题。
 
 规则：
 1. 涉及国家标准、行业标准、地方标准、标准编号、年份、适用范围，只能依据有 URL 的可核验资料；
