@@ -1,16 +1,16 @@
 {
   "name": "生蚝AI知识库",
   "version": "5.0-incremental-no-builtin",
-  "updated_at": "2026-07-28 05:14:23",
-  "total": 427,
-  "newly_added": 14,
-  "url_count": 427,
+  "updated_at": "2026-07-29 05:20:34",
+  "total": 430,
+  "newly_added": 3,
+  "url_count": 430,
   "categories": {
     "病害防控": 48,
     "学术论文": 109,
-    "种质标准": 75,
-    "养殖规程": 98,
-    "综合资料": 49,
+    "种质标准": 76,
+    "养殖规程": 99,
+    "综合资料": 50,
     "遗传育种": 41,
     "专利文献": 7
   },
@@ -49,7 +49,7 @@
     "SerpAPI Google公开检索：www.hyyysci.com": 1,
     "SerpAPI Google公开检索：www.newsmarket.com.tw": 1,
     "SerpAPI Google公开检索：fjnews.fjsen.com": 1,
-    "SerpAPI Google公开检索：stb.mae.edu.cn": 2,
+    "SerpAPI Google公开检索：stb.mae.edu.cn": 3,
     "SerpAPI Google公开检索：www.huancui.gov.cn": 1,
     "SerpAPI Google公开检索：www.sdtdata.com": 1,
     "SerpAPI Google公开检索：w3fs.tainan.gov.tw": 1,
@@ -91,7 +91,7 @@
     "SerpAPI Google公开检索：www.naturechina.com": 1,
     "SerpAPI Google公开检索：www.syfjxzz.com": 1,
     "SerpAPI Google公开检索：www.semanticscholar.org": 1,
-    "SerpAPI Google公开检索：kmweb.moa.gov.tw": 1,
+    "SerpAPI Google公开检索：kmweb.moa.gov.tw": 2,
     "SerpAPI Google公开检索：www.huilai.gov.cn": 1,
     "SerpAPI Google公开检索：kexie.weihai.cn": 1,
     "SerpAPI Google公开检索：scjgj.cq.gov.cn": 1,
@@ -165,7 +165,8 @@
     "SerpAPI Google公开检索：www.11665.com": 1,
     "SerpAPI Google公开检索：www.whnews.cn": 1,
     "SerpAPI Google公开检索：rsbh.net": 1,
-    "SerpAPI Google公开检索：www.shizifang.com": 1
+    "SerpAPI Google公开检索：www.shizifang.com": 1,
+    "SerpAPI Google公开检索：hyyyj.fujian.gov.cn": 1
   },
   "documents": [
     {
@@ -6448,6 +6449,51 @@
       "summary": "DLJ Vendrami, RD Houston, K Gharbi… - Evolutionary …, 2019 - hal.science … (Crassostrea gigas) is the world's most heavily cultivated shellfish species and has been introduced to all continents except Antarctica for aquaculture… information for breeding programs …",
       "content_length": 508,
       "added_at": "2026-07-28 05:14:22"
+    },
+    {
+      "id": "a2077c33ed4860d4ce70",
+      "title": "长牡蛎“海大1号”品种登记号 - 全国科技小院服务管理平台",
+      "category": "种质标准",
+      "source": "SerpAPI Google公开检索：stb.mae.edu.cn",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://stb.mae.edu.cn/site/yard/562/resource/36706",
+      "domain": "stb.mae.edu.cn",
+      "date": "",
+      "content": "标题：长牡蛎“海大1号”品种登记号 - 全国科技小院服务管理平台\n来源：SerpAPI Google公开检索：stb.mae.edu.cn\n摘要/检索片段：... 长牡蛎为基础群体，以金黄壳色和生长速度作为选育目标，采用家系选育和群体选育相结合的混合选育技术，经连续4代选育而成。相同的养殖环境下，与未经选育的长牡蛎相比 ...\nURL：https://stb.mae.edu.cn/site/yard/562/resource/36706",
+      "summary": "... 长牡蛎为基础群体，以金黄壳色和生长速度作为选育目标，采用家系选育和群体选育相结合的混合选育技术，经连续4代选育而成。相同的养殖环境下，与未经选育的长牡蛎相比 ...",
+      "content_length": 220,
+      "added_at": "2026-07-29 05:20:14"
+    },
+    {
+      "id": "6f43df3a68c8dec7af35",
+      "title": "三倍体牡蛎新品系“世倍1号”在泉州通过验收 - 福建省海洋与渔业局",
+      "category": "养殖规程",
+      "source": "SerpAPI Google公开检索：hyyyj.fujian.gov.cn",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://hyyyj.fujian.gov.cn/xxgk/hydt/tpxw/202308/t20230808_6222243.htm",
+      "domain": "hyyyj.fujian.gov.cn",
+      "date": "",
+      "content": "标题：三倍体牡蛎新品系“世倍1号”在泉州通过验收 - 福建省海洋与渔业局\n来源：SerpAPI Google公开检索：hyyyj.fujian.gov.cn\n摘要/检索片段：“世倍1号”是世倍海洋科技有限公司、集美大学等单位联合研发的福建牡蛎三倍体新品系，具有生长速度快、养殖周期短、抗逆性强、品质优良等优点。\nURL：https://hyyyj.fujian.gov.cn/xxgk/hydt/tpxw/202308/t20230808_6222243.htm",
+      "summary": "“世倍1号”是世倍海洋科技有限公司、集美大学等单位联合研发的福建牡蛎三倍体新品系，具有生长速度快、养殖周期短、抗逆性强、品质优良等优点。",
+      "content_length": 231,
+      "added_at": "2026-07-29 05:20:18"
+    },
+    {
+      "id": "2d1f503aaf2a858eb063",
+      "title": "牡蠣- 農業知識入口網",
+      "category": "综合资料",
+      "source": "SerpAPI Google公开检索：kmweb.moa.gov.tw",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://kmweb.moa.gov.tw/knowledge_view.php?id\\u003d11233",
+      "domain": "kmweb.moa.gov.tw",
+      "date": "",
+      "content": "标题：牡蠣- 農業知識入口網\n来源：SerpAPI Google公开检索：kmweb.moa.gov.tw\n摘要/检索片段：三倍體生蠔之生產方法： 有關牡蠣染色體倍體化技術及其處理後產品，目前台灣尚在試驗階段， 市面並沒有相關的生產及流通的產品。\nURL：https://kmweb.moa.gov.tw/knowledge_view.php?id\\u003d11233",
+      "summary": "三倍體生蠔之生產方法： 有關牡蠣染色體倍體化技術及其處理後產品，目前台灣尚在試驗階段， 市面並沒有相關的生產及流通的產品。",
+      "content_length": 185,
+      "added_at": "2026-07-29 05:20:18"
     }
   ]
 }
