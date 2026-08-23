@@ -1,17 +1,17 @@
 {
   "name": "生蚝AI知识库",
   "version": "5.0-incremental-no-builtin",
-  "updated_at": "2026-08-22 02:52:51",
-  "total": 530,
-  "newly_added": 6,
-  "url_count": 530,
+  "updated_at": "2026-08-23 03:01:09",
+  "total": 533,
+  "newly_added": 3,
+  "url_count": 533,
   "categories": {
     "病害防控": 74,
     "学术论文": 125,
-    "种质标准": 98,
+    "种质标准": 100,
     "养殖规程": 114,
     "综合资料": 67,
-    "遗传育种": 42,
+    "遗传育种": 43,
     "专利文献": 10
   },
   "sources": {
@@ -21,7 +21,7 @@
     "SerpAPI Google公开检索：amr.sz.gov.cn": 1,
     "SerpAPI Google公开检索：maribreeding.com": 1,
     "SerpAPI Google公开检索：www.rushan.gov.cn": 2,
-    "SerpAPI Google公开检索：std.samr.gov.cn": 15,
+    "SerpAPI Google公开检索：std.samr.gov.cn": 16,
     "SerpAPI Google公开检索：hyyysci.com": 2,
     "SerpAPI Google公开检索：scjgj.weihai.gov.cn": 1,
     "SerpAPI Google公开检索：www.encyclopedie-environnement.org": 1,
@@ -84,7 +84,7 @@
     "SerpAPI Google公开检索：www.hitech863.com": 1,
     "SerpAPI Google公开检索：wsjkw.sh.gov.cn": 1,
     "SerpAPI Google公开检索：doh.wa.gov": 1,
-    "SerpAPI Google公开检索：www.sohu.com": 3,
+    "SerpAPI Google公开检索：www.sohu.com": 4,
     "SerpAPI Google公开检索：www.shobserver.cn": 1,
     "SerpAPI Google公开检索：www.zhmda.org.cn": 1,
     "SerpAPI Google公开检索：kpzg.people.com.cn": 1,
@@ -199,7 +199,8 @@
     "SerpAPI Google公开检索：www.hyxbocean.cn": 1,
     "SerpAPI Google公开检索：www.hanspub.org": 1,
     "SerpAPI Google公开检索：zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn": 1,
-    "SerpAPI Google公开检索：etd.lis.nsysu.edu.tw": 1
+    "SerpAPI Google公开检索：etd.lis.nsysu.edu.tw": 1,
+    "SerpAPI Google公开检索：m.tech.china.com": 1
   },
   "documents": [
     {
@@ -8027,6 +8028,51 @@
       "summary": "摘要: 为了评估香港牡蛎（♀）×长牡蛎（♂）杂种在北方沿海养殖中期能否产生种间杂种优势，在分析了早期杂种优势的基础上 ...",
       "content_length": 233,
       "added_at": "2026-08-22 02:52:12"
+    },
+    {
+      "id": "de987dd48eff583b08fe",
+      "title": "国际领先水平！牡蛎现代种业和规范养殖模式创建与产业化 ...",
+      "category": "遗传育种",
+      "source": "SerpAPI Google公开检索：www.sohu.com",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://www.sohu.com/a/754065897_121106991",
+      "domain": "www.sohu.com",
+      "date": "",
+      "content": "标题：国际领先水平！牡蛎现代种业和规范养殖模式创建与产业化 ...\n来源：SerpAPI Google公开检索：www.sohu.com\n摘要/检索片段：... 牡蛎基因组结构和功能，构建了首张贝类基因组精细图谱，引领中国水产研究进入了基因组时代；建立了牡蛎四倍体种质创制技术、全三倍体制备技术、分子 ...\nURL：https://www.sohu.com/a/754065897_121106991",
+      "summary": "... 牡蛎基因组结构和功能，构建了首张贝类基因组精细图谱，引领中国水产研究进入了基因组时代；建立了牡蛎四倍体种质创制技术、全三倍体制备技术、分子 ...",
+      "content_length": 201,
+      "added_at": "2026-08-23 02:59:36"
+    },
+    {
+      "id": "6dad655fbf2a89e26ed7",
+      "title": "研究揭示近江牡蛎种质资源格局形成机制 - 科技- 中华网",
+      "category": "种质标准",
+      "source": "SerpAPI Google公开检索：m.tech.china.com",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "http://m.tech.china.com/tech/article/20211115/20211115924699.html",
+      "domain": "m.tech.china.com",
+      "date": "",
+      "content": "标题：研究揭示近江牡蛎种质资源格局形成机制 - 科技- 中华网\n来源：SerpAPI Google公开检索：m.tech.china.com\n摘要/检索片段：近江牡蛎是河口区生态系统中重要的基石性物种，作为滤食性贝类可提供多种生态系统服务功能。其广泛分布于中国、朝鲜、韩国、日本和越南等西北太平洋沿海各 ...\nURL：http://m.tech.china.com/tech/article/20211115/20211115924699.html",
+      "summary": "近江牡蛎是河口区生态系统中重要的基石性物种，作为滤食性贝类可提供多种生态系统服务功能。其广泛分布于中国、朝鲜、韩国、日本和越南等西北太平洋沿海各 ...",
+      "content_length": 225,
+      "added_at": "2026-08-23 02:59:39"
+    },
+    {
+      "id": "1253541a6cb9c66f663c",
+      "title": "地方标准目录 - 全国标准信息公共服务平台",
+      "category": "种质标准",
+      "source": "SerpAPI Google公开检索：std.samr.gov.cn",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://std.samr.gov.cn/db/dbQuery",
+      "domain": "std.samr.gov.cn",
+      "date": "",
+      "content": "标题：地方标准目录 - 全国标准信息公共服务平台\n来源：SerpAPI Google公开检索：std.samr.gov.cn\n摘要/检索片段：行业标准 · 地方标准 · 团体标准 · 企业标准 · 国际标准 · 国外标准 · 技术委员会. 华北地区. 北京, 天津, 河北. 山西, 内蒙古. 华东地区 ... 国家市场监督管理总局国家标准 ...\nURL：https://std.samr.gov.cn/db/dbQuery",
+      "summary": "行业标准 · 地方标准 · 团体标准 · 企业标准 · 国际标准 · 国外标准 · 技术委员会. 华北地区. 北京, 天津, 河北. 山西, 内蒙古. 华东地区 ... 国家市场监督管理总局国家标准 ...",
+      "content_length": 213,
+      "added_at": "2026-08-23 03:00:15"
     }
   ]
 }
