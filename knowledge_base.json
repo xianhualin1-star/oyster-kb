@@ -1,18 +1,18 @@
 {
   "name": "生蚝AI知识库",
   "version": "5.0-incremental-no-builtin",
-  "updated_at": "2026-08-23 03:01:09",
-  "total": 533,
-  "newly_added": 3,
-  "url_count": 533,
+  "updated_at": "2026-08-24 03:02:02",
+  "total": 535,
+  "newly_added": 2,
+  "url_count": 535,
   "categories": {
     "病害防控": 74,
     "学术论文": 125,
-    "种质标准": 100,
+    "种质标准": 101,
     "养殖规程": 114,
     "综合资料": 67,
     "遗传育种": 43,
-    "专利文献": 10
+    "专利文献": 11
   },
   "sources": {
     "Semantic Scholar公开论文题录": 8,
@@ -21,7 +21,7 @@
     "SerpAPI Google公开检索：amr.sz.gov.cn": 1,
     "SerpAPI Google公开检索：maribreeding.com": 1,
     "SerpAPI Google公开检索：www.rushan.gov.cn": 2,
-    "SerpAPI Google公开检索：std.samr.gov.cn": 16,
+    "SerpAPI Google公开检索：std.samr.gov.cn": 17,
     "SerpAPI Google公开检索：hyyysci.com": 2,
     "SerpAPI Google公开检索：scjgj.weihai.gov.cn": 1,
     "SerpAPI Google公开检索：www.encyclopedie-environnement.org": 1,
@@ -200,7 +200,8 @@
     "SerpAPI Google公开检索：www.hanspub.org": 1,
     "SerpAPI Google公开检索：zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn": 1,
     "SerpAPI Google公开检索：etd.lis.nsysu.edu.tw": 1,
-    "SerpAPI Google公开检索：m.tech.china.com": 1
+    "SerpAPI Google公开检索：m.tech.china.com": 1,
+    "SerpAPI Google公开检索：patent.gbicom.cn": 1
   },
   "documents": [
     {
@@ -8073,6 +8074,36 @@
       "summary": "行业标准 · 地方标准 · 团体标准 · 企业标准 · 国际标准 · 国外标准 · 技术委员会. 华北地区. 北京, 天津, 河北. 山西, 内蒙古. 华东地区 ... 国家市场监督管理总局国家标准 ...",
       "content_length": 213,
       "added_at": "2026-08-23 03:00:15"
+    },
+    {
+      "id": "b09de25d6df3848c2529",
+      "title": "行业标准目录查询 - 全国标准信息公共服务平台",
+      "category": "种质标准",
+      "source": "SerpAPI Google公开检索：std.samr.gov.cn",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://std.samr.gov.cn/hb/hbQuery?initnode=NY%20%E5%86%9C%E4%B8%9A",
+      "domain": "std.samr.gov.cn",
+      "date": "",
+      "content": "标题：行业标准目录查询 - 全国标准信息公共服务平台\n来源：SerpAPI Google公开检索：std.samr.gov.cn\n摘要/检索片段：地方标准 · 团体标准 · 企业标准 · 国际标准 · 国外标准 · 技术委员会. 所有行业分类. BB（包装） AQ（安全生产）. CB ... 国家市场监督管理总局国家标准技术审评 ...\nURL：https://std.samr.gov.cn/hb/hbQuery?initnode=NY%20%E5%86%9C%E4%B8%9A",
+      "summary": "地方标准 · 团体标准 · 企业标准 · 国际标准 · 国外标准 · 技术委员会. 所有行业分类. BB（包装） AQ（安全生产）. CB ... 国家市场监督管理总局国家标准技术审评 ...",
+      "content_length": 241,
+      "added_at": "2026-08-24 03:01:22"
+    },
+    {
+      "id": "9740a0114f4b9a15556b",
+      "title": "牡蛎养殖的生态净化方法 - 专利交易",
+      "category": "专利文献",
+      "source": "SerpAPI Google公开检索：patent.gbicom.cn",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://patent.gbicom.cn/sell/237494.html",
+      "domain": "patent.gbicom.cn",
+      "date": "",
+      "content": "标题：牡蛎养殖的生态净化方法 - 专利交易\n来源：SerpAPI Google公开检索：patent.gbicom.cn\n摘要/检索片段：本发明提供牡蛎养殖的生态净化方法，属于水产养殖领域，该方法具体是通过用分散有对羟基苯甲醛和邻硝基苯酚钠的培养基于极端环境下培养得益生菌，然后将 ...\nURL：https://patent.gbicom.cn/sell/237494.html",
+      "summary": "本发明提供牡蛎养殖的生态净化方法，属于水产养殖领域，该方法具体是通过用分散有对羟基苯甲醛和邻硝基苯酚钠的培养基于极端环境下培养得益生菌，然后将 ...",
+      "content_length": 190,
+      "added_at": "2026-08-24 03:01:25"
     }
   ]
 }
