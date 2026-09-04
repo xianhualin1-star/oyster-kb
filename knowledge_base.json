@@ -1,15 +1,15 @@
 {
   "name": "生蚝AI知识库",
   "version": "5.0-incremental-no-builtin",
-  "updated_at": "2026-09-03 06:50:39",
-  "total": 647,
-  "newly_added": 0,
-  "url_count": 647,
+  "updated_at": "2026-09-04 06:55:47",
+  "total": 649,
+  "newly_added": 2,
+  "url_count": 649,
   "categories": {
     "病害防控": 82,
     "学术论文": 147,
-    "种质标准": 131,
-    "养殖规程": 129,
+    "种质标准": 132,
+    "养殖规程": 130,
     "综合资料": 88,
     "遗传育种": 59,
     "专利文献": 11
@@ -34,7 +34,7 @@
     "SerpAPI Google公开检索：www.fao.org": 6,
     "SerpAPI Google公开检索：syb.cas.cn": 1,
     "SerpAPI Google公开检索：fjnk.fjnyxb.cn": 2,
-    "SerpAPI Google公开检索：news.sciencenet.cn": 4,
+    "SerpAPI Google公开检索：news.sciencenet.cn": 5,
     "SerpAPI Google公开检索：www.china-fishery.cn": 6,
     "SerpAPI Google公开检索：www.sciengine.com": 4,
     "SerpAPI Google公开检索：www.qdio.ac.cn": 1,
@@ -217,7 +217,8 @@
     "SerpAPI Google公开检索：www.moj.gov.cn": 1,
     "SerpAPI Google公开检索：www.cnipa.gov.cn": 1,
     "SerpAPI Google公开检索：www.ndrc.gov.cn": 1,
-    "SerpAPI Google公开检索：www.zjcxy.org.cn": 1
+    "SerpAPI Google公开检索：www.zjcxy.org.cn": 1,
+    "SerpAPI Google公开检索：www.shou.edu.cn": 1
   },
   "documents": [
     {
@@ -9800,6 +9801,36 @@
       "summary": "姚小华， 王开良， 任华东， 林萍 - 2012 - ecsponline.com … 本专著作为国家“十一五” 科技支撑课 题“油茶高产优质新种质创制” (… 其中,国家油茶科学中心油茶 种质创 新与利用实验室是依托中国… 是2005年,为我国油茶研究论文文献量的最高年 份.油茶研究…",
       "content_length": 274,
       "added_at": "2026-08-31 08:06:18"
+    },
+    {
+      "id": "1925f064275ec64e2324",
+      "title": "李琪：我国牡蛎养殖与新品种培育(水产一流学科暨国家 ...",
+      "category": "种质标准",
+      "source": "SerpAPI Google公开检索：www.shou.edu.cn",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://www.shou.edu.cn/2018/1210/c105a236796/page.htm",
+      "domain": "www.shou.edu.cn",
+      "date": "",
+      "content": "标题：李琪：我国牡蛎养殖与新品种培育(水产一流学科暨国家 ...\n来源：SerpAPI Google公开检索：www.shou.edu.cn\n摘要/检索片段：李琪：我国牡蛎养殖与新品种培育(水产一流学科暨国家海洋生物科学国际联合研究中心学术报告） ; 报告人： 李琪 ; 报告时间：2018年12月12日下午13:30-15:30.\nURL：https://www.shou.edu.cn/2018/1210/c105a236796/page.htm",
+      "summary": "李琪：我国牡蛎养殖与新品种培育(水产一流学科暨国家海洋生物科学国际联合研究中心学术报告） ; 报告人： 李琪 ; 报告时间：2018年12月12日下午13:30-15:30.",
+      "content_length": 225,
+      "added_at": "2026-09-04 06:55:30"
+    },
+    {
+      "id": "30182f2dc89d6fcdda4f",
+      "title": "牡蛎生化营养成分变化与性腺发育关系研究获进展 - 新闻- 科学网",
+      "category": "养殖规程",
+      "source": "SerpAPI Google公开检索：news.sciencenet.cn",
+      "source_type": "search_result",
+      "has_url": true,
+      "url": "https://news.sciencenet.cn/htmlnews/2022/8/484967.shtm",
+      "domain": "news.sciencenet.cn",
+      "date": "",
+      "content": "标题：牡蛎生化营养成分变化与性腺发育关系研究获进展 - 新闻- 科学网\n来源：SerpAPI Google公开检索：news.sciencenet.cn\n摘要/检索片段：牡蛎是世界和中国的第一大养殖贝类，我国牡蛎养殖产量约540万吨，占全世界的80%以上，占我国海水养殖总量的25.4%，具有非常重要的经济价值；因此，牡蛎最 ...\nURL：https://news.sciencenet.cn/htmlnews/2022/8/484967.shtm",
+      "summary": "牡蛎是世界和中国的第一大养殖贝类，我国牡蛎养殖产量约540万吨，占全世界的80%以上，占我国海水养殖总量的25.4%，具有非常重要的经济价值；因此，牡蛎最 ...",
+      "content_length": 225,
+      "added_at": "2026-09-04 06:55:32"
     }
   ]
 }
